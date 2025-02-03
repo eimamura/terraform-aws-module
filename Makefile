@@ -20,4 +20,4 @@ a:
 
 # Destroy Terraform
 d:
-	$(TF_CMD) destroy
+	$(TF_CMD) destroy --auto-approve

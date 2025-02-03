@@ -40,3 +40,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "user_data" {
+  description = "User data script to be executed on EC2 instance launch"
+  type        = string
+  default     = "" # Default is empty, so it doesn't run anything unless passed
+}

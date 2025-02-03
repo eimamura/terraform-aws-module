@@ -8,4 +8,6 @@ resource "aws_instance" "this" {
   tags = merge(var.tags, {
     Name = var.instance_name
   })
+  # Pass the user_data variable here
+  user_data = var.user_data
 }
