@@ -19,17 +19,21 @@ variable "cidr_block" {
 }
 
 # Define CIDR blocks for public subnets
-variable "public_subnet_ids" {
-  description = "A list of CIDR blocks for the public subnets"
-  type        = list(string)
-  default     = ["10.0.1.0/24"] # Example public subnet CIDR
+variable "public_subnets" {
+  type = map(object({
+    cidr = string
+    az   = string
+  }))
+  description = "Map of public subnets with their CIDR and Availability Zone"
 }
 
 # Define CIDR blocks for private subnets
-variable "private_subnet_ids" {
-  description = "A list of CIDR blocks for the private subnets"
-  type        = list(string)
-  default     = ["10.0.2.0/24"] # Example private subnet CIDR
+variable "private_subnets" {
+  type = map(object({
+    cidr = string
+    az   = string
+  }))
+  description = "Map of private subnets with their CIDR and Availability Zone"
 }
 
 # Define the name of the VPC

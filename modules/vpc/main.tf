@@ -10,25 +10,28 @@ resource "aws_vpc" "main" {
 
 # Create public subnets
 resource "aws_subnet" "subnet_public" {
-  for_each                = toset(var.public_subnet_ids) # Iterate through public subnet IDs
-  vpc_id                  = aws_vpc.main.id              # Reference the newly created VPC
-  cidr_block              = each.value                   # Subnet CIDR block from the list
-  map_public_ip_on_launch = true                         # Public subnet setting
+  for_each                = var.public_subnets # Iterate through public subnet IDs
+  vpc_id                  = aws_vpc.main.id    # Reference the newly created VPC
+  cidr_block              = each.value.cidr    # Subnet CIDR block from the list
+  availability_zone       = each.value.az      # Availability zone for the subnet
+  map_public_ip_on_launch = true               # Public subnet setting
   tags = merge(var.tags, {
-    Name = "public-subnet-${each.value}"
+    Name = "public-subnet-${each.value.cidr}"
   })
 }
 
 # Create private subnets
 resource "aws_subnet" "subnet_private" {
-  for_each                = toset(var.private_subnet_ids) # Iterate through private subnet IDs
-  vpc_id                  = aws_vpc.main.id               # Reference the newly created VPC
-  cidr_block              = each.value                    # Subnet CIDR block from the list
-  map_public_ip_on_launch = false                         # Private subnet setting
+  for_each                = var.private_subnets # Iterate through private subnet IDs
+  vpc_id                  = aws_vpc.main.id     # Reference the newly created VPC
+  cidr_block              = each.value.cidr     # Subnet CIDR block from the list
+  availability_zone       = each.value.az       # Availability zone for the subnet
+  map_public_ip_on_launch = false               # private subnet setting
   tags = merge(var.tags, {
-    Name = "private-subnet-${each.value}"
+    Name = "private-subnet-${each.value.cidr}"
   })
 }
+
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id # Attach the IGW to the newly created VPC
