@@ -23,13 +23,16 @@ d:
 	$(TF_CMD) destroy --auto-approve
 
 scp:
+	scp -i $(KEY_FILE) .env ec2-user@$(BASTION_IP):~/
+	scp -i $(KEY_FILE) Makefile ec2-user@$(BASTION_IP):~/
 	scp -i $(KEY_FILE) $(KEY_FILE) ec2-user@$(BASTION_IP):~/
 
 bastion:
 	ssh -i "$(KEY_FILE)" ec2-user@$(BASTION_IP)
 
 chmod:
-	chmod 400 $(KEY_FILE)
+	chmod 700 $(KEY_FILE)
+	chmod 600 .env
 
 p1:
 	ssh -i "$(KEY_FILE)" ec2-user@$(P1_IP)

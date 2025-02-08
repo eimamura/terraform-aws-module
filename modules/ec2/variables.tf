@@ -46,3 +46,9 @@ variable "user_data" {
   type        = string
   default     = "" # Default is empty, so it doesn't run anything unless passed
 }
+
+variable "iam_instance_profile" {
+  description = "The IAM instance profile to associate with the EC2 instances"
+  type        = string
+  default     = "" # Default is empty, so it doesn't associate any instance profile
+}

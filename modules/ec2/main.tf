@@ -10,4 +10,7 @@ resource "aws_instance" "this" {
   })
   # Pass the user_data variable here
   user_data = var.user_data
+
+  # Conditionally use the IAM instance profile if provided
+  iam_instance_profile = var.iam_instance_profile != "" ? var.iam_instance_profile : null
 }

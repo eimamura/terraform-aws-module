@@ -22,3 +22,8 @@ output "igw_id" {
 #   description = "The ID of the NAT Gateway."
 #   value       = aws_nat_gateway.nat_gw.id
 # }
+
+output "route_table_id" {
+  description = "The ID of the route table"
+  value       = aws_route_table.private.id
+}
