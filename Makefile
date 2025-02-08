@@ -1,23 +1,37 @@
-# Makefile for Terraform commands
+# Load environment variables from .env file
+include .env
+export $(shell sed 's/=.*//' .env)
 
 # Variables
-TF_CMD=terraform
+TF_CMD = terraform
+KEY_FILE = awstest-keypair.pem
 
 # Targets
-.PHONY: i p a d
+.PHONY: i p a d scp bastion chmod p1 p2
 
-# Initialize Terraform
 i:
 	$(TF_CMD) init
 
-# Plan Terraform
 p:
 	$(TF_CMD) plan
 
-# Apply Terraform
 a:
 	$(TF_CMD) apply --auto-approve
 
-# Destroy Terraform
 d:
 	$(TF_CMD) destroy --auto-approve
+
+scp:
+	scp -i $(KEY_FILE) $(KEY_FILE) ec2-user@$(BASTION_IP):~/
+
+bastion:
+	ssh -i "$(KEY_FILE)" ec2-user@$(BASTION_IP)
+
+chmod:
+	chmod 400 $(KEY_FILE)
+
+p1:
+	ssh -i "$(KEY_FILE)" ec2-user@$(P1_IP)
+
+p2:
+	ssh -i "$(KEY_FILE)" ec2-user@$(P2_IP)
