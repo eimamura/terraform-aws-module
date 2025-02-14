@@ -38,13 +38,18 @@ variable "ecs_task_execution_role_arn" {
 #     default     = "512"
 # }
 
-# variable "ecr_repository_name" {
-#     description = "The name of the ECR repository"
-#     type        = string
-# }
+variable "ecr_repository_url" {
+  description = "The url of the ECR repository"
+  type        = string
+}
 
 # variable "ecr_image_tag" {
 #     description = "The tag of the ECR image"
 #     type        = string
 #     default     = "latest"
 # }
+
+variable "alb_target_group_arn" {
+  description = "ARN of the ECS Target Group"
+  type        = string
+}

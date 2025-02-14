@@ -3,7 +3,7 @@ resource "aws_ecs_task_definition" "backend_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "fastapi-deploy"
-      image     = aws_ecr_repository.my_repository.repository_url
+      image     = var.ecr_repository_url
       essential = true
       portMappings = [
         {
@@ -13,13 +13,13 @@ resource "aws_ecs_task_definition" "backend_task_definition" {
       ]
       # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/healthcheck.html
       # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definition_healthcheck
-      # "healthCheck" : {
-      #   "command" : ["CMD-SHELL", "curl -f http://127.0.0.1/ || exit 1"],
-      #   "interval" : 30, # seconds
-      #   "timeout" : 5,   # seconds
-      #   "retries" : 3,
-      #   "startPeriod" : 60 # seconds
-      # }
+      "healthCheck" : {
+        "command" : ["CMD-SHELL", "curl -f http://127.0.0.1/ || exit 1"],
+        "interval" : 30, # seconds
+        "timeout" : 5,   # seconds
+        "retries" : 3,
+        "startPeriod" : 60 # seconds
+      }
     }
   ])
   requires_compatibilities = ["FARGATE"]

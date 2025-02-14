@@ -11,9 +11,9 @@ resource "aws_ecs_service" "backend_service" {
     assign_public_ip = true
   }
 
-  # load_balancer {
-  #   target_group_arn = aws_lb_target_group.example.arn
-  #   container_name   = "backend"
-  #   container_port   = 80
-  # }
+  load_balancer {
+    target_group_arn = var.alb_target_group_arn
+    container_name   = "fastapi-deploy"
+    container_port   = 80
+  }
 }
