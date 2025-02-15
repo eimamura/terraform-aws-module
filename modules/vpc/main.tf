@@ -40,17 +40,17 @@ resource "aws_internet_gateway" "igw" {
   })
 }
 
-resource "aws_eip" "nat_eip" {
-  domain = "vpc"
-}
+# resource "aws_eip" "nat_eip" {
+#   domain = "vpc"
+# }
 
-resource "aws_nat_gateway" "nat_gw" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.subnet_public[keys(aws_subnet.subnet_public)[0]].id # Dynamically select first public subnet
-  tags = merge(var.tags, {
-    Name = "${var.vpc_name}-nat-gateway"
-  })
-}
+# resource "aws_nat_gateway" "nat_gw" {
+#   allocation_id = aws_eip.nat_eip.id
+#   subnet_id     = aws_subnet.subnet_public[keys(aws_subnet.subnet_public)[0]].id # Dynamically select first public subnet
+#   tags = merge(var.tags, {
+#     Name = "${var.vpc_name}-nat-gateway"
+#   })
+# }
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id # Reference the newly created VPC
@@ -74,10 +74,10 @@ resource "aws_route_table_association" "public_association" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id # Reference the newly created VPC
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gw.id
-  }
+  # route {
+  #   cidr_block     = "0.0.0.0/0"
+  #   nat_gateway_id = aws_nat_gateway.nat_gw.id
+  # }
 
   tags = merge(var.tags, {
     Name = "${var.vpc_name}-private-route-table"

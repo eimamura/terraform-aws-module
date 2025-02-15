@@ -7,10 +7,12 @@ locals {
             sudo systemctl enable nginx
             echo "<html><body><h1>Hello World from public subnet 0 (Bastion)</h1></body></html>" > /usr/share/nginx/html/index.html
             sudo systemctl restart nginx
-            mkdir -p /mnt/efs
-            echo "${aws_efs_file_system.example.dns_name}:/ /mnt/efs efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
-            mount -a
             EOF
+  # setup_efs   = <<-EOF
+  #           mkdir -p /mnt/efs
+  #           echo "${aws_efs_file_system.example.dns_name}:/ /mnt/efs efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
+  #           sudo mount -a
+  #           EOF
 }
 
 
@@ -26,7 +28,10 @@ module "public_ec2" {
   subnet_id               = module.vpc.public_subnet_ids[0] # First one of list Public subnet ID
   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
   use_spot_instance = true
-  user_data         = local.setup_nginx
+  user_data         = <<-EOF
+            #!/bin/bash
+            ${local.setup_nginx}
+            EOF
 }
 output "bastion_ip" {
   value = module.public_ec2.instance_public_ip
