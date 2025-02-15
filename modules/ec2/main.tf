@@ -13,4 +13,18 @@ resource "aws_instance" "this" {
 
   # Conditionally use the IAM instance profile if provided
   iam_instance_profile = var.iam_instance_profile != "" ? var.iam_instance_profile : null
+
+  # Conditionally use instance_market_options if use_spot_instance is true
+  dynamic "instance_market_options" {
+    for_each = var.use_spot_instance ? [1] : []
+    content {
+      market_type = "spot"
+      spot_options {
+        instance_interruption_behavior = "stop"
+        max_price                      = "0.01"
+        spot_instance_type             = "persistent"
+        # valid_until = "2022-12-31T23:59:59Z"
+      }
+    }
+  }
 }

@@ -10,6 +10,7 @@ locals {
             EOF
 }
 
+
 # For Public EC2 Instance
 module "public_ec2" {
   source                  = "./modules/ec2"
@@ -22,7 +23,8 @@ module "public_ec2" {
   create_in_public_subnet = true                            # Explicitly set to true for public subnet
   subnet_id               = module.vpc.public_subnet_ids[0] # First one of list Public subnet ID
   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
-  user_data = local.setup_nginx
+  use_spot_instance = true
+  user_data         = local.setup_nginx
 }
 output "bastion_ip" {
   value = module.public_ec2.instance_public_ip
@@ -79,3 +81,50 @@ output "private_2" {
   value = module.private_ec2_2.instance_private_ip
 }
 
+module "launch_template" {
+  source          = "./modules/launch_template"
+  name            = "my-launch-template"
+  image_id        = data.aws_ami.amazon_linux_2023.id
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+  subnet_id       = module.vpc.public_subnet_ids[0] # First one of list Public subnet ID
+  user_data       = local.setup_nginx
+  tags            = var.tags
+  # iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
+}
+
+# module "ec2_fleet" {
+#   source             = "./modules/ec2_fleet"
+#   launch_template_id = module.launch_template.launch_template_id
+#   latest_version     = "$Latest"
+#   target_capacity    = 2
+# }
+
+# resource "aws_autoscaling_group" "example" {
+#   name                      = "example-asg"
+#   desired_capacity          = 2
+#   min_size                  = 1
+#   max_size                  = 3
+#   vpc_zone_identifier       = module.vpc.public_subnet_ids
+#   force_delete              = true
+#   health_check_type         = "ELB" # Can be either "EC2" or "ELB"
+#   health_check_grace_period = 300
+#   # wait_for_capacity_timeout = "0"
+
+#   launch_template {
+#     id      = module.launch_template.launch_template_id
+#     version = "$Latest"
+#   }
+#   tag {
+#     key                 = "Name"
+#     value               = "autoscaling-group-instance"
+#     propagate_at_launch = true
+#   }
+# }
+
+# # Create a new load balancer attachment
+# resource "aws_autoscaling_attachment" "example" {
+#   autoscaling_group_name = aws_autoscaling_group.example.name
+#   lb_target_group_arn    = module.load_balancer.alb_target_group_arn
+# }

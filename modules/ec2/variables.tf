@@ -52,3 +52,9 @@ variable "iam_instance_profile" {
   type        = string
   default     = "" # Default is empty, so it doesn't associate any instance profile
 }
+
+variable "use_spot_instance" {
+  description = "Flag to determine if the EC2 instance should be a spot instance"
+  type        = bool
+  default     = false
+}
