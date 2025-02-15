@@ -66,3 +66,9 @@ variable "tags" {
     Environment = "dev"
   }
 }
+
+variable "email_address" {
+  description = "The email address to receive notifications"
+  type        = string
+  default     = ""
+}
