@@ -2,35 +2,36 @@ locals {
   setup_nginx = <<-EOF
             #!/bin/bash
             sudo yum update -y
-            sudo yum install -y nginx make
+            sudo yum install -y nginx make amazon-efs-utils
             sudo systemctl start nginx
             sudo systemctl enable nginx
             echo "<html><body><h1>Hello World from public subnet 0 (Bastion)</h1></body></html>" > /usr/share/nginx/html/index.html
             sudo systemctl restart nginx
+            mkdir -p /mnt/efs
+            echo "${aws_efs_file_system.example.dns_name}:/ /mnt/efs efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
+            mount -a
             EOF
 }
 
 
-# For Public EC2 Instance
-# module "public_ec2" {
-#   source                  = "./modules/ec2"
-#   ami_id                  = data.aws_ami.amazon_linux_2023.id
-#   instance_type           = var.instance_type
-#   key_name                = var.key_name
-#   security_group_ids      = [module.sg.ssh_only_sg, module.sg.http_only_sg]
-#   instance_name           = "ec2-public-${var.project}-bastion"
-#   tags                    = var.tags
-#   create_in_public_subnet = true                            # Explicitly set to true for public subnet
-#   subnet_id               = module.vpc.public_subnet_ids[0] # First one of list Public subnet ID
-#   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
-#   use_spot_instance = true
-#   user_data         = local.setup_nginx
-# }
-# output "bastion_ip" {
-#   value = module.public_ec2.instance_public_ip
-# }
+module "public_ec2" {
+  source                  = "./modules/ec2"
+  ami_id                  = data.aws_ami.amazon_linux_2023.id
+  instance_type           = var.instance_type
+  key_name                = var.key_name
+  security_group_ids      = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+  instance_name           = "ec2-public-${var.project}-bastion"
+  tags                    = var.tags
+  create_in_public_subnet = true                            # Explicitly set to true for public subnet
+  subnet_id               = module.vpc.public_subnet_ids[0] # First one of list Public subnet ID
+  # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
+  use_spot_instance = true
+  user_data         = local.setup_nginx
+}
+output "bastion_ip" {
+  value = module.public_ec2.instance_public_ip
+}
 
-# # For Private EC2 Instance
 # module "private_ec2" {
 #   source                  = "./modules/ec2"
 #   ami_id                  = data.aws_ami.amazon_linux_2023.id

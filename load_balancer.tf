@@ -11,9 +11,9 @@
 #   target_group_port     = 80
 #   target_group_protocol = "HTTP"
 #   vpc_id                = module.vpc.vpc_id
-#   ec2_instance_ids      = null
-#   #   ec2_instance_ids      = [module.private_ec2.instance_id, module.private_ec2_2.instance_id]
-#   #   target_type = "instance"
+#   #   ec2_instance_ids      = null
+#   ec2_instance_ids = [module.private_ec2.instance_id, module.private_ec2_2.instance_id]
+#   target_type      = "instance"
 #   #   target_type = "ip"
 
 #   health_check_interval = 30

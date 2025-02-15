@@ -72,3 +72,15 @@ variable "email_address" {
   type        = string
   default     = ""
 }
+
+variable "domain_name" {
+  description = "The domain name for the resources"
+  type        = string
+  default     = ""
+}
+
+variable "name_servers" {
+  description = "The name servers for the domain"
+  type        = list(string)
+  default     = []
+}
