@@ -18,3 +18,8 @@ output "efs_sg" {
   description = "The name of the security group."
   value       = aws_security_group.efs_sg.id
 }
+
+output "rds_postgres_sg" {
+  description = "The name of the security group."
+  value       = aws_security_group.rds_postgres_sg.id
+}

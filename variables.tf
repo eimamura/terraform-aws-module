@@ -84,3 +84,9 @@ variable "name_servers" {
   type        = list(string)
   default     = []
 }
+
+variable "password" {
+  description = "The password for the resources"
+  type        = string
+  default     = ""
+}
