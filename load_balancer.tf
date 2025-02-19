@@ -22,6 +22,7 @@
 #   healthy_threshold     = 3
 #   unhealthy_threshold   = 3
 
+#   certificate_arn   = aws_acm_certificate_validation.example.certificate_arn
 #   listener_port     = 80
 #   listener_protocol = "HTTP"
 #   tags              = var.tags
