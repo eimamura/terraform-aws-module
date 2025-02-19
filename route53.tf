@@ -4,7 +4,7 @@
 
 # resource "aws_route53_zone" "subdomain" {
 #   name = local.subdomain
-#   #   force_destroy = true
+#   force_destroy = true
 # }
 # output "name_servers" {
 #   value = aws_route53_zone.subdomain.name_servers
