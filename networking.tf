@@ -7,6 +7,7 @@ module "vpc" {
   instance_type   = var.instance_type   # EC2 instance type
   key_name        = var.key_name        # EC2 key pair name
   tags            = var.tags            # Tags for resources
+  enable_nat      = false
 }
 
 module "sg" {

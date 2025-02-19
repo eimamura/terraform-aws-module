@@ -1,3 +1,8 @@
+variable "enable_nat" {
+  type    = bool
+  default = false
+}
+
 variable "cidr_block" {
   description = "The CIDR block for the VPC."
   type        = string
