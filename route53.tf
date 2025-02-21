@@ -17,21 +17,36 @@
 # #   records = [module.public_ec2.instance_public_ip]
 # # }
 
-# resource "aws_route53_record" "alb" {
+# # resource "aws_route53_record" "alb" {
+# #   zone_id = aws_route53_zone.subdomain.zone_id
+# #   name    = local.subdomain
+# #   type    = "A"
+
+# #   alias {
+# #     name                   = module.load_balancer.alb_dns_name
+# #     zone_id                = module.load_balancer.zone_id
+# #     evaluate_target_health = true
+# #   }
+# # }
+
+# resource "aws_route53_record" "cdn" {
 #   zone_id = aws_route53_zone.subdomain.zone_id
 #   name    = local.subdomain
 #   type    = "A"
 
 #   alias {
-#     name                   = module.load_balancer.alb_dns_name
-#     zone_id                = module.load_balancer.zone_id
-#     evaluate_target_health = true
+#     name                   = aws_cloudfront_distribution.my_distribution.domain_name
+#     zone_id                = aws_cloudfront_distribution.my_distribution.hosted_zone_id
+#     evaluate_target_health = false
 #   }
 # }
 
 # resource "aws_acm_certificate" "example" {
 #   domain_name       = local.subdomain
 #   validation_method = "DNS"
+#   lifecycle {
+#     create_before_destroy = true
+#   }
 # }
 
 # resource "aws_route53_record" "example" {
