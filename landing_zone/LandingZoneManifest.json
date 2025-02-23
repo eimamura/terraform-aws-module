@@ -1,0 +1,46 @@
+{
+    "landing_zone_name": "MyControlTower",
+    "home_region": "us-east-1",
+    "organizational_units": [
+        {
+            "name": "Security",
+            "description": "Contains security-related accounts"
+        },
+        {
+            "name": "Infrastructure",
+            "description": "Manages core infrastructure services"
+        },
+        {
+            "name": "Workloads",
+            "description": "Holds application workloads"
+        }
+    ],
+    "guardrails": [
+        "AWS-GR_RESTRICT_ROOT_USER",
+        "AWS-GR_DISALLOW_S3_PUBLIC_READ",
+        "AWS-GR_DISALLOW_S3_PUBLIC_WRITE",
+        "AWS-GR_EC2_VOLUME_INUSE_CHECK"
+    ],
+    "accounts": [
+        {
+            "account_name": "LogArchive",
+            "email": "logarchive@example.com",
+            "organizational_unit": "Security"
+        },
+        {
+            "account_name": "Audit",
+            "email": "audit@example.com",
+            "organizational_unit": "Security"
+        },
+        {
+            "account_name": "Networking",
+            "email": "networking@example.com",
+            "organizational_unit": "Infrastructure"
+        }
+    ],
+    "parameters": {
+        "AllowedRegions": [
+            "us-east-1"
+        ]
+    }
+}

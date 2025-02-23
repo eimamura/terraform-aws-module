@@ -72,6 +72,11 @@ variable "email_address" {
   type        = string
   default     = ""
 }
+variable "email_address_alias_dev" {
+  description = "The email address to receive notifications"
+  type        = string
+  default     = ""
+}
 
 variable "domain_name" {
   description = "The domain name for the resources"
