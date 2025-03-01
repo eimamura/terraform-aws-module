@@ -55,6 +55,8 @@ stop:
 	aws ecs update-service --cluster my-cluster --service $(ECS_SERVICE) --desired-count 0
 psql:
 	psql -h $(RDS_HOST) -U $(RDS_USER) -d $(RDS_DB) -p 5432
+sts:
+	aws sts get-caller-identity
 assume:
 	aws sts assume-role \
     --role-arn $(ROLE_ARN) \
