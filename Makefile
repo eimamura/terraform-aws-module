@@ -55,3 +55,16 @@ stop:
 	aws ecs update-service --cluster my-cluster --service $(ECS_SERVICE) --desired-count 0
 psql:
 	psql -h $(RDS_HOST) -U $(RDS_USER) -d $(RDS_DB) -p 5432
+assume:
+	aws sts assume-role \
+    --role-arn $(ROLE_ARN) \
+    --role-session-name test-session \
+    --profile prod
+credentials:
+	export AWS_ACCESS_KEY_ID=""
+	export AWS_SECRET_ACCESS_KEY=""
+	export AWS_SESSION_TOKEN=""
+unset:
+	unset AWS_ACCESS_KEY_ID
+	unset AWS_SECRET_ACCESS_KEY
+	unset AWS_SESSION_TOKEN

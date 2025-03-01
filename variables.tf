@@ -95,3 +95,15 @@ variable "password" {
   type        = string
   default     = ""
 }
+
+variable "account_id_manage" {
+  description = "The AWS Account ID for the management account"
+  type        = string
+  default     = ""
+}
+
+variable "account_id_prod" {
+  description = "The AWS Account ID for the production account"
+  type        = string
+  default     = ""
+}
