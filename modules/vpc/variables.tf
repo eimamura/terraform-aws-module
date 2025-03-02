@@ -27,22 +27,10 @@ variable "private_subnets" {
   description = "Map of private subnets with their CIDR and Availability Zone"
 }
 
-
 variable "vpc_name" {
   description = "The name of the VPC."
   type        = string
   default     = "my-new-vpc"
-}
-
-variable "instance_type" {
-  description = "The type of the EC2 instance."
-  type        = string
-  default     = "t2.micro"
-}
-
-variable "key_name" {
-  description = "The name of the EC2 key pair."
-  type        = string
 }
 
 variable "tags" {

@@ -13,32 +13,33 @@ locals {
   #           echo "${aws_efs_file_system.example.dns_name}:/ /mnt/efs efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
   #           sudo mount -a
   #           EOF
-  setup_ssm = <<-EOF
-              sudo dnf install -y amazon-ssm-agent
-              sudo systemctl start amazon-ssm-agent
-              sudo systemctl enable amazon-ssm-agent
-              EOF
+  # setup_ssm = <<-EOF
+  #             sudo dnf install -y amazon-ssm-agent
+  #             sudo systemctl start amazon-ssm-agent
+  #             sudo systemctl enable amazon-ssm-agent
+  #             EOF
 
   # amazon-efs-utils
   # postgresql16
 }
 
 # module "public_ec2" {
-#   source                  = "./modules/ec2"
-#   ami_id                  = data.aws_ami.amazon_linux_2023.id
-#   instance_type           = var.instance_type
-#   key_name                = var.key_name
-#   security_group_ids      = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+#   source             = "./modules/ec2"
+#   ami_id             = data.aws_ami.amazon_linux_2023.id
+#   instance_type      = var.instance_type
+#   key_name           = var.key_name
+#   security_group_ids = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+#   # security_group_ids      = [module.sg["vpc1"].ssh_only_sg, module.sg["vpc1"].http_only_sg]
 #   instance_name           = "ec2-public-${var.project}-bastion"
 #   tags                    = var.tags
 #   create_in_public_subnet = true                            # Explicitly set to true for public subnet
 #   subnet_id               = module.vpc.public_subnet_ids[0] # First one of list Public subnet ID
-#   iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
+#   # subnet_id = module.vpc["vpc1"].public_subnet_ids[0]
+#   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
 #   # use_spot_instance = true
 #   user_data = <<-EOF
 #             #!/bin/bash
 #             ${local.setup_nginx}
-#             ${local.setup_ssm}
 #             EOF
 # }
 # output "bastion_ip" {
@@ -46,17 +47,19 @@ locals {
 # }
 
 # module "private_ec2" {
-#   source                  = "./modules/ec2"
-#   ami_id                  = data.aws_ami.amazon_linux_2023.id
-#   instance_type           = var.instance_type
-#   key_name                = var.key_name
-#   security_group_ids      = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+#   source        = "./modules/ec2"
+#   ami_id        = data.aws_ami.amazon_linux_2023.id
+#   instance_type = var.instance_type
+#   key_name      = var.key_name
+#   # security_group_ids      = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+#   security_group_ids      = [module.sg_for_peering["vpc1"].ssh_only_sg, module.sg_for_peering["vpc1"].http_only_sg]
 #   instance_name           = "ec2-private-${var.project}"
 #   tags                    = var.tags
-#   create_in_public_subnet = false                            # Explicitly set to false for private subnet
-#   subnet_id               = module.vpc.private_subnet_ids[0] # First one of list Private subnet ID
-#   iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
-#   user_data               = <<-EOF
+#   create_in_public_subnet = false # Explicitly set to false for private subnet
+#   # subnet_id               = module.vpc.private_subnet_ids[0] # First one of list Private subnet ID
+#   subnet_id = module.vpc_for_peering["vpc1"].private_subnet_ids[0]
+#   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
+#   user_data = <<-EOF
 #             #!/bin/bash
 #             sudo yum update -y
 #             sudo yum install -y nginx
@@ -71,15 +74,17 @@ locals {
 # }
 
 # module "private_ec2_2" {
-#   source                  = "./modules/ec2"
-#   ami_id                  = data.aws_ami.amazon_linux_2023.id
-#   instance_type           = var.instance_type
-#   key_name                = var.key_name
-#   security_group_ids      = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+#   source        = "./modules/ec2"
+#   ami_id        = data.aws_ami.amazon_linux_2023.id
+#   instance_type = var.instance_type
+#   key_name      = var.key_name
+#   # security_group_ids      = [module.sg.ssh_only_sg, module.sg.http_only_sg]
+#   security_group_ids      = [module.sg_for_peering["vpc2"].ssh_only_sg, module.sg_for_peering["vpc2"].http_only_sg]
 #   instance_name           = "ec2-private-${var.project}-2"
 #   tags                    = var.tags
-#   create_in_public_subnet = false                            # Explicitly set to false for private subnet
-#   subnet_id               = module.vpc.private_subnet_ids[1] # First one of list Private subnet ID
+#   create_in_public_subnet = false # Explicitly set to false for private subnet
+#   # subnet_id               = module.vpc.private_subnet_ids[1]
+#   subnet_id = module.vpc_for_peering["vpc2"].private_subnet_ids[1]
 #   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
 #   user_data = <<-EOF
 #             #!/bin/bash

@@ -3,6 +3,11 @@ output "vpc_id" {
   value       = aws_vpc.main.id
 }
 
+output "cidr_block" {
+  description = "The CIDR block of the VPC."
+  value       = aws_vpc.main.cidr_block
+}
+
 output "public_subnet_ids" {
   description = "The IDs of the public subnets."
   value       = values(aws_subnet.subnet_public)[*].id # Extract the IDs from the map
@@ -23,7 +28,12 @@ output "igw_id" {
 #   value       = aws_nat_gateway.nat_gw.id
 # }
 
-output "route_table_id" {
+output "public_route_table_id" {
+  description = "The ID of the route table"
+  value       = aws_route_table.public.id
+}
+
+output "private_route_table_id" {
   description = "The ID of the route table"
   value       = aws_route_table.private.id
 }
