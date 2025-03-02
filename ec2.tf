@@ -13,11 +13,15 @@ locals {
   #           echo "${aws_efs_file_system.example.dns_name}:/ /mnt/efs efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
   #           sudo mount -a
   #           EOF
+  setup_ssm = <<-EOF
+              sudo dnf install -y amazon-ssm-agent
+              sudo systemctl start amazon-ssm-agent
+              sudo systemctl enable amazon-ssm-agent
+              EOF
 
   # amazon-efs-utils
   # postgresql16
 }
-
 
 # module "public_ec2" {
 #   source                  = "./modules/ec2"
@@ -29,11 +33,12 @@ locals {
 #   tags                    = var.tags
 #   create_in_public_subnet = true                            # Explicitly set to true for public subnet
 #   subnet_id               = module.vpc.public_subnet_ids[0] # First one of list Public subnet ID
-#   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
+#   iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
 #   # use_spot_instance = true
 #   user_data = <<-EOF
 #             #!/bin/bash
 #             ${local.setup_nginx}
+#             ${local.setup_ssm}
 #             EOF
 # }
 # output "bastion_ip" {
@@ -50,8 +55,8 @@ locals {
 #   tags                    = var.tags
 #   create_in_public_subnet = false                            # Explicitly set to false for private subnet
 #   subnet_id               = module.vpc.private_subnet_ids[0] # First one of list Private subnet ID
-#   # iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
-#   user_data = <<-EOF
+#   iam_instance_profile    = aws_iam_instance_profile.ec2_instance_profile.name
+#   user_data               = <<-EOF
 #             #!/bin/bash
 #             sudo yum update -y
 #             sudo yum install -y nginx
@@ -88,6 +93,27 @@ locals {
 # }
 # output "private_2" {
 #   value = module.private_ec2_2.instance_private_ip
+# }
+
+
+# # Create an IAM role for EC2 to access S3
+# module "ec2_access_s3_role" {
+#   source              = "./modules/iam_role"
+#   role_name           = "ec2-s3-access-role"
+#   assume_role_service = "ec2.amazonaws.com"
+#   policy_json         = file("policies/ec2-s3-policy.json")
+# }
+
+# # Attach the SSM policy to the IAM role
+# resource "aws_iam_role_policy_attachment" "ssm_policy_attachment" {
+#   role       = module.ec2_access_s3_role.iam_role_name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+# }
+
+# # Create an instance profile for EC2 to access S3
+# resource "aws_iam_instance_profile" "ec2_instance_profile" {
+#   name = "ec2-s3-access-profile"
+#   role = basename(module.ec2_access_s3_role.iam_role_arn)
 # }
 
 # module "launch_template" {
